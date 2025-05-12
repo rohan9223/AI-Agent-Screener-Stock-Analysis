@@ -1,0 +1,232 @@
+{
+  "name": "AI Agent- Screener Update",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Sub: {{ $json.subject }}\nBody Content: {{ $json.body.content }}\n\n",
+        "options": {
+          "systemMessage": "You are a financial analyst trained by Warren Buffett. Extract and summarize the content based on Buffett’s investing style.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        240,
+        -220
+      ],
+      "id": "eed45556-d8a2-4abe-9c6a-3e325131acf1",
+      "name": "Buffett AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        240,
+        -40
+      ],
+      "id": "28fb7dbc-ade0-48ac-8b62-fdc95d687501",
+      "name": "Gemini LLM",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "yGXtplPFTTS8BiTf",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "output": "raw",
+        "filters": {
+          "custom": "",
+          "foldersToInclude": [
+            "AQMkADAwATM0MDAAMi04ZWQyLWRkAGE5LTAwAi0wMAoALgAAA_BwXHEF7ntGn_MIczLK0VEBAHBn2d7BRO9JiBRxWrYSx2YAAAIBDAAAAA=="
+          ],
+          "sender": "mraj81530@gmail.com"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlookTrigger",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        -200
+      ],
+      "id": "477e3428-266d-4bf2-9b87-9875771094f3",
+      "name": "Microsoft Outlook Trigger",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "837BYuIyC47urPn9",
+          "name": "Microsoft Outlook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "19854878-440d-4080-82a0-4ea027d3addc",
+              "leftValue": "={{ $json.subject }}",
+              "rightValue": "Screener.in",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -120,
+        -200
+      ],
+      "id": "e560a20a-d6d3-4347-bb8b-139d3c13338a",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": {
+          "__rl": true,
+          "value": "=\n {{ $json.id }}",
+          "mode": "id"
+        },
+        "output": "fields",
+        "fields": [
+          "body",
+          "subject"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        20,
+        -400
+      ],
+      "id": "86b10290-f519-42b7-852a-ccd4a932edda",
+      "name": "Microsoft Outlook",
+      "webhookId": "e900de44-9c42-4f60-a238-44419622df36",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "837BYuIyC47urPn9",
+          "name": "Microsoft Outlook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toRecipients": "mraj81530@gmail.com, mraj81530@outlook.com",
+        "subject": "Test",
+        "bodyContent": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        820,
+        -220
+      ],
+      "id": "007369db-8acd-4223-ae9c-a69d7bf843c6",
+      "name": "Microsoft Outlook1",
+      "webhookId": "8d51ef8b-d8c5-421d-b768-a0bacb3fb5d0",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "837BYuIyC47urPn9",
+          "name": "Microsoft Outlook account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Buffett AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Microsoft Outlook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini LLM": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Buffett AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Microsoft Outlook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Microsoft Outlook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Microsoft Outlook": {
+      "main": [
+        [
+          {
+            "node": "Buffett AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8af6f9e6-c09e-4f92-935a-95e2aa1eb60e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bb186d30bc2164fa31de8e4c447a3ac32bf7a5c61db89d22ca205c647134ef70"
+  },
+  "id": "YiMSmsUia4gvij1y",
+  "tags": []
+}
