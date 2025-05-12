@@ -26,8 +26,6 @@ This project contains an **n8n workflow** that automates the analysis of stock a
 4. Sends to Gemini for Buffett-style analysis
 5. Returns summarized email back to user
 
-## 📸 Sample Output
-> "_This company has consistent ROCE > 15%, low debt, high promoter holding, and undervalued based on intrinsic valuation._"
 
 ## 📥 Getting Started
 See `setup_instructions.md` for full configuration steps.
@@ -35,6 +33,5 @@ See `setup_instructions.md` for full configuration steps.
 ## 🙌 Contributing
 Feel free to fork and suggest improvements (e.g., add charts, database logging, Telegram alerts, etc.)
 
-## 📄 License
-MIT
+
 
